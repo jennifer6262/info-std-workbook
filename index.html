@@ -574,6 +574,7 @@ const CH = ['컴퓨팅 시스템','데이터','알고리즘과 프로그래밍',
 const LV = ['A','B','C','D','E'];
 const LVC = {A:'#8C70D6',B:'#A98BE0',C:'#C792D8',D:'#E39BBE',E:'#F0B6CB'};
 const KEY = 'infoCompassWorkbook_v1';
+const IMG = id => (+id.slice(1) <= 92 ? '1%EC%B0%A8' : '2%EC%B0%A8') + '/img/' + id + '.png';
 const $ = s => document.querySelector(s);
 const el = (t, a = {}, h = '') => { const e = document.createElement(t); for (const k in a) { if (k === 'class') e.className = a[k]; else e.setAttribute(k, a[k]); } if (h) e.innerHTML = h; return e; };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -736,14 +737,14 @@ function showQ(i) {
   S.last = q.id; save();
   $('#qCrumb').innerHTML = `<a href="#ch${q.c + 1}" style="color:inherit"><b>${q.c + 1}. ${CH[q.c]}</b></a><span>›</span><span>${q.n}번 문항</span><span class="pill">전체 ${i + 1} / ${QS.length}</span>`;
   $('#qTitle').innerHTML = `${q.n}번 <small>${CH[q.c]} · ${q.n}/${counts(q.c).n}</small>`;
-  const img = $('#qImg'); img.src = 'img/' + q.id + '.png'; img.alt = `${CH[q.c]} ${q.n}번 문항: ${q.s}`; img.width = q.w; img.height = q.h;
+  const img = $('#qImg'); img.src = IMG(q.id); img.alt = `${CH[q.c]} ${q.n}번 문항: ${q.s}`; img.width = q.w; img.height = q.h;
   applyZoom();
   $('#setNote').hidden = !q.set;
   poolOpen = false;
   renderAna(true);
   setView('q');
   // preload neighbors
-  [i + 1, i - 1].forEach(j => { if (QS[j]) { const p = new Image(); p.src = 'img/' + QS[j].id + '.png'; } });
+  [i + 1, i - 1].forEach(j => { if (QS[j]) { const p = new Image(); p.src = IMG(QS[j].id); } });
 }
 let poolOpen = false;
 function renderAna(first) {
@@ -1054,7 +1055,7 @@ function buildPages(withImg, withEmpty) {
       const an = `<div class="k">성취기준</div>${s ? `<div><span class="code">${s.code}</span> ${esc(s.text)}</div>` : '<div class="empty">미선택</div>'}
         <div class="k">성취수준</div>${a.lv && s ? `<div><span class="lvb" style="background:${LVC[a.lv]}">${a.lv}</span>${esc(s.levels[a.lv])}</div>` : '<div class="empty">미선택</div>'}
         ${a.memo ? `<div class="k">분석 근거</div><div>${esc(a.memo).replace(/\n/g, '<br>')}</div>` : ''}`;
-      const qi = withImg ? `<div class="qi"><div class="qt">${c + 1}-${q.n}번</div><img src="img/${q.id}.png"></div>` : `<div class="qi" style="width:240px"><div class="qt">${c + 1}-${q.n}번</div><div class="stem">${esc(q.s)}</div></div>`;
+      const qi = withImg ? `<div class="qi"><div class="qt">${c + 1}-${q.n}번</div><img src="${IMG(q.id)}"></div>` : `<div class="qi" style="width:240px"><div class="qt">${c + 1}-${q.n}번</div><div class="stem">${esc(q.s)}</div></div>`;
       const row = el('div', { class: 'row' }, qi + `<div class="an">${an}</div>`);
       body.appendChild(row);
       row._q = q;
@@ -1276,7 +1277,7 @@ function renderDetail() {
   const q = QS[qIdx[stSel]], o = STATS.q[q.id], box = $('#stDet');
   const mine = S.ans[q.id];
   const head = `<div class="det-head"><div><h3>${q.c + 1}. ${CH[q.c]} · ${q.n}번</h3><p class="sub" style="margin:2px 0 0">${o ? `응답 ${o.n}명` : '아직 응답 없음'}</p></div><button class="btn btn-sec" style="padding:8px 12px" data-go="${q.id}">이 문항 풀기 ›</button></div>
-    <div class="det-thumb${q.h * 0.5 < 220 ? ' short' : ''}" id="detThumb"><img src="img/${q.id}.png" alt="${esc(q.s)}"></div>`;
+    <div class="det-thumb${q.h * 0.5 < 220 ? ' short' : ''}" id="detThumb"><img src="${IMG(q.id)}" alt="${esc(q.s)}"></div>`;
   if (!o) { box.innerHTML = head + '<div class="empty-box">이 문항에는 아직 전송된 응답이 없어요.</div>'; bindThumb(q); return; }
   const stds = STD.filter(s => s.c === q.c || o.std[s.code]).filter(s => o.std[s.code] || s.c === q.c);
   if (!stStd || !o.std[stStd]) stStd = o.top;
@@ -1293,7 +1294,7 @@ function renderDetail() {
   box.querySelectorAll('.hbar.click').forEach(b => b.onclick = () => { stStd = b.dataset.std; SND.tap(); renderDetail(); });
   bindTips(box); bindThumb(q);
 }
-function bindThumb(q) { const t = $('#detThumb'); if (t) t.onclick = () => { lbZ = 1; cur.qi = qIdx[q.id]; $('#lbImg').src = 'img/' + q.id + '.png'; lbApply(); $('#lb').classList.add('on'); }; }
+function bindThumb(q) { const t = $('#detThumb'); if (t) t.onclick = () => { lbZ = 1; cur.qi = qIdx[q.id]; $('#lbImg').src = IMG(q.id); lbApply(); $('#lb').classList.add('on'); }; }
 
 /* ---------- init ---------- */
 renderSound(); updateProgress(); route();
